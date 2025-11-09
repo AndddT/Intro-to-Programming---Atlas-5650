@@ -2,7 +2,7 @@ import pygame
 import sys
 import random
 
-# Positive Engegament features is asking th user if they would like to take a break at game and telling 
+# Positive Engegament features is asking the user if they would like to take a break at game and telling 
 # what skills they learned and how they can improve. Function is used to display the skills box
 
 # Welcome to a new and exciting racing game! In this game you are a plant racing against obstacles as you
@@ -313,5 +313,6 @@ while running:
 # ========================================
 pygame.quit()
 sys.exit()
+
 
 
