@@ -1,26 +1,31 @@
-"""This script will create classes that will draw pygame objects baseson on imported CSV data.
-spotify_songs.csv is needed to run this code"""
 
-""" AI Assistance: I initially used Claude to explain concepts and functions I did not understand
-like bllit(), flip() and snippets of the coffee shop example. Claude was then used to help generate code that
-I was unsure how to properly write.
+""" 
+AI Assistance: I initially used Claude to explain concepts and functions I did not understand like bllit(), flip(), the coffee shop example and then how to use the template
+from lab 8 in the While Loop. Claude was then used to help generate code that I was unsure how to properly write.
 
 AI Generated Snippets:
 self.x = random.randint(1,599)
 self.y = random.randint(1,799)
 
-screen.blit(scaled_image, (self.x, self.y)) """
+with open("KPoP.csv", encoding='utf-8',newline='') as csvfile: (Claude was used here since I was unsure why my data was not being read in properly)
 
+screen.blit(scaled_image, (self.x, self.y)) (Claude was used here since I loaded my images but did not know how to reshape them) """
+
+# Importing everything necessary
 import csv
 import pygame 
 import random
+import visual_objects
+import sys
+
+
 
 
 #==========================================================
 # Setting up Pygame
 #==========================================================
 screen = pygame.display.set_mode((600,800))
-pygame.display.set_caption("Spotify Songs")
+pygame.display.set_caption("Kpop Music")
 
 clock = pygame.time.Clock()
 FPS = 60
@@ -36,65 +41,8 @@ running = True
 #=================================================================
 # Setting up class and functions 
 #=================================================================
-
-class musicNote:
-    def __init__(self,danceability, energy, tempo):
-        # x and y are set to random numbers so music notes appear sporadically
-        self.x = random.randint(1,599)
-        self.y = random.randint(1,799)
-        self.danceability = danceability
-        self.energy = energy
-        self.tempo = tempo
-         
-
-    def determineColor(self):
-        """Determines the color of the music note based on the danceability rating.
-        Danceability ranges from .3 to 1. Danceability rating from .3 - .65 = Green, .65 - 1 = Pink"""
-        if self.danceability < .65:
-            self.color = "green"
-        else:
-            self.color = "pink"
-
-    def determineSize(self):
-        """Determines size of music note based on the energy rating. Energy ranges fron .2 - .6.
-        Energy rating from .2 - .4 = 30 pixels, .4 - .6 = 100 pixels"""
-        if self.energy < .4:
-            self.size = "small"
-        else:
-            self.size = "big"
-
-    def determineType(self):
-        """Determines weather music note will be a quarter note ir eighth note. Tempo ranges from 68 - 180.
-        Tempo rating 68 - 124 = quarter note, 124 - 180 = eigth note"""
-        if self.tempo <= 124:
-            self.type = "quarter"
-        else:
-            self.type = "eigth"
-
-
-    def drawImages(self):
-        """Loads the note images based on type of note and color and sizes them as well"""
-        if self.type == "quarter":
-        
-            if self.color == "green":
-                quarterNote = pygame.image.load("./greenQuarterNote.png")
-            else:
-                quarterNote = pygame.image.load("./pinkQuarterNote.png")
-        if self.type == "eigth":
-        
-            if self.color == "green":
-                quarterNote = pygame.image.load("./greenEigthNote.png")
-            else:
-                quarterNote = pygame.image.load("./pinkEigthNote.png")
-
-
-
-        if self.size == "small":
-            scaled_image = pygame.transform.scale(quarterNote, (30, 30))
-        else:
-            scaled_image = pygame.transform.scale(quarterNote, (100, 100))
-
-        screen.blit(scaled_image, (self.x, self.y))
+# Importing in the classes from visual_objects 
+from visual_objects import musicNote, musicStaffLines
 
 
 # ===========================================================
@@ -102,15 +50,30 @@ class musicNote:
 # ===========================================================
 musicNoteData = [] #Creating an emppty list to store the data 
 #Grabbing danceability, energy and tempo from the data set 
-with open("KPoP.csv", encoding='utf-8',newline='') as csvfile:
+with open("KPoP.csv", encoding='utf-8',newline='') as csvfile: #Claude assisted since I was unsure why the file was not being read in properly
     file = csv.reader(csvfile, delimiter = ',',quotechar = '"')
     next(file)
 # Creating a for loop to loop through the data 
-    for row in file:
-        danceability = float(row[12])
+    for row in file: 
+        danceability = float(row[12]) 
         energy = float(row[13])
         tempo = float(row[22])
-        musicNoteData.append(musicNote(danceability, energy, tempo)) #Appending the musicNoteDataList and calling musicNote class
+        musicNoteData.append(musicNote(danceability, energy, tempo)) #Appending the musicNoteDataList and calling musicNote class. 
+
+#Creates a list of lines, that will appear across the image like a music staff
+linePositions = []
+linePositions.append(musicStaffLines((0,50), (600,50), BLACK, 10)) #The staff lines will go across the screen, be black and have a thickness of 10. The image will looks like it has 3 groupings of staff lines
+linePositions.append(musicStaffLines((0,100), (600,100), BLACK, 10)) # This is group 1 across the top 
+linePositions.append(musicStaffLines((0,150), (600, 150), BLACK, 10))
+
+linePositions.append(musicStaffLines((0,400), (600,400), BLACK, 10)) # This is group 2 across the middle 
+linePositions.append(musicStaffLines((0,350), (600,350), BLACK, 10))
+linePositions.append(musicStaffLines((0,450), (600, 450), BLACK, 10))
+
+
+linePositions.append(musicStaffLines((0,650), (600,650), BLACK, 10)) # This is group 3 across the bottom 
+linePositions.append(musicStaffLines((0,700), (600,700), BLACK, 10))
+linePositions.append(musicStaffLines((0,750), (600, 750), BLACK, 10))
 
 
 
@@ -119,22 +82,30 @@ if __name__ == "__main__":
 # ----------------------------------------
 # EVENT HANDLING
 # ----------------------------------------
+# Taken from the templkate for Lab 8 
         for event in pygame.event.get():
                 # Check if user wants to quit
                 if event.type == pygame.QUIT:
                     running = False
 
 
-        screen.fill(WHITE) #changing the background to white so the notes pop more 
+        screen.fill(WHITE) #Changing the background to white so the notes pop more 
+
+      
 
         for note in musicNoteData: #Looping through the musicNoteData list and calling all functions to draw notes 
-            note.determineColor()
-            note.determineSize()
-            note.determineType()
-            note.drawImages()
-        pygame.display.flip()
-        clock.tick(FPS)
+            note.determineColor() # First figures out the color of the note
+            note.determineSize() # Then checks the size of the note 
+            note.determineType() # Then checks the type of the note 
+            note.drawImages(screen) #Then draws the note itself 
 
+        for line in linePositions: #Looping through the list of line positions and then drawing them to the screen 
+            line.drawLines(screen)
+        
+    
+        pygame.display.flip() 
+        clock.tick(FPS)
+    
 
 
  # ========================================
@@ -142,6 +113,3 @@ if __name__ == "__main__":
 # ========================================
     pygame.quit()
     sys.exit()
-
-
-
